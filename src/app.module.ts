@@ -1,19 +1,12 @@
-import { Module, CacheModule } from '@nestjs/common';
-import * as redisStore from 'cache-manager-redis-store';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { KafkaModule } from './kafka/kafka.module';
+import { RedisCacheModule } from './redis/redis.module';
 import { ConfigurationServiceConsumer } from './config.consumer';
 
 @Module({
-  imports: [
-    KafkaModule,
-    CacheModule.register({
-      store: redisStore,
-      host: 'localhost',
-      port: 6379,
-    }),
-  ],
+  imports: [KafkaModule, RedisCacheModule],
   controllers: [AppController],
   providers: [AppService, ConfigurationServiceConsumer],
 })
