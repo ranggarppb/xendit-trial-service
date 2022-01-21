@@ -6,7 +6,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(): Promise<any> {
-    return this.appService.getHello();
+  getRequest(): Promise<any> {
+    return this.appService.getRequest();
   }
 }
