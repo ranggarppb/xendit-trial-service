@@ -1,21 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { RedisCacheService } from './redis/redis.service';
-import fetch from 'node-fetch';
+import { ConfigService } from './config-service/config-service.service';
 
 @Injectable()
 export class AppService {
-  constructor(private readonly redisCacheService: RedisCacheService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly redisCacheService: RedisCacheService,
+  ) {}
 
   private async getConfigAndStoreInCache() {
     console.log('Getting data directly from config server');
     try {
-      const response = await fetch('http://localhost:8080/service/config');
-      const config = await response.json();
+      const config = await this.configService.get();
       console.log('Set config in cache');
       await this.redisCacheService.set('configuration', config, {
         ttl: 31556952,
       });
-      return config;
+      return JSON.parse(config);
     } catch (error) {
       console.log('Error getting data from config server');
       return 'Default config';
@@ -30,6 +32,7 @@ export class AppService {
     }
 
     console.log('Getting data from cache');
+    if (typeof config === 'string') return JSON.parse(config);
     return config;
   }
 }
