@@ -10,12 +10,12 @@ export class AppService {
     console.log('Getting data directly from config server');
     try {
       const response = await fetch('http://localhost:8080/service/config');
-      const config = await response.json();
+      const config = await response.text();
       console.log('Set config in cache');
       await this.redisCacheService.set('configuration', config, {
         ttl: 31556952,
       });
-      return config;
+      return JSON.parse(config);
     } catch (error) {
       console.log('Error getting data from config server');
       return 'Default config';
